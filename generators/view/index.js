@@ -1,36 +1,25 @@
 'use strict';
-var yeoman = require('yeoman-generator');
-var chalk = require('chalk');
-var yosay = require('yosay');
+var path = require('path');
+var generators = require('yeoman-generator');
 
-module.exports = yeoman.Base.extend({
-  prompting: function () {
-    // Have Yeoman greet the user.
-    this.log(yosay(
-      'Welcome to the rad ' + chalk.red('generator-vue-2') + ' generator!'
-    ));
+module.exports = generators.Base.extend({
+  constructor: function () {
+    generators.Base.apply(this, arguments);
 
-    var prompts = [{
-      type: 'confirm',
-      name: 'someAnswer',
-      message: 'Would you like to enable this option?',
-      default: true
-    }];
-
-    return this.prompt(prompts).then(function (props) {
-      // To access props later use this.props.someAnswer;
-      this.props = props;
-    }.bind(this));
+    this.argument('namespace', {
+      type: String,
+      required: true,
+      description: 'Generator namespace'
+    });
   },
 
   writing: function () {
-    this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
+    this.fs.copyTpl(
+      this.templatePath('component.vue'),
+      this.destinationPath('./src/views/' + this.namespace + '.vue'),
+      {
+        namespace: this.namespace
+      }
     );
-  },
-
-  install: function () {
-    this.installDependencies();
   }
 });
